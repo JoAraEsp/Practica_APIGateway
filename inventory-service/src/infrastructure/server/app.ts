@@ -21,7 +21,7 @@ const productController = new ProductController(productRepository);
 app.get('/products', productController.listProducts);
 app.post('/products/create', productController.createProduct);
 app.delete('/products/delete/:id', productController.deleteProduct);
-app.post('/products/update-stock', productController.updateStock); // Asegúrate de que esta ruta esté configurada
+app.post('/products/update-stock', productController.updateStock); 
 
 app.use('/', async (req, res) => {
     const products = await productRepository.findAll();
