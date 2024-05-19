@@ -13,6 +13,13 @@ app.use(morgan('dev'));
 const PORT = process.env.PORT || 3000;
 const GATEWAY = "api-gateway";
 
+// Rutas del servicio de pedidos
+app.use('/api/v1/orders/update-tracking/:id', proxy('http://localhost:3001', {
+    proxyReqPathResolver: function (req: Request) {
+        return `/orders/update-tracking/${req.params.id}`;
+    }
+}));
+
 app.use('/api/v1/orders/create', proxy('http://localhost:3001/orders/create', {
     proxyReqPathResolver: function (req: Request) {
         return '/orders/create';
@@ -29,12 +36,6 @@ app.use('/api/v1/orders/:id', proxy('http://localhost:3001/orders', {
     }
 }));
 
-app.use('/api/v1/orders/update-tracking/:id', proxy('http://localhost:3001/orders/update-tracking', {
-    proxyReqPathResolver: function (req: Request) {
-        return `/orders/update-tracking/${req.params.id}`;
-    }
-}));
-
 app.use('/api/v1/orders-products/create', proxy('http://localhost:3001/orders-products/create', {
     proxyReqPathResolver: function (req: Request) {
         return '/orders-products/create';
@@ -46,6 +47,7 @@ app.use('/api/v1/orders-products/update/:id', proxy('http://localhost:3001/order
     }
 }));
 
+// Rutas del servicio de productos
 app.use('/api/v1/products/create', proxy('http://localhost:3002/products/create', {
     proxyReqPathResolver: function (req: Request) {
         return '/products/create';
@@ -59,6 +61,11 @@ app.use('/api/v1/products/delete/:id', proxy('http://localhost:3002/products/del
 app.use('/api/v1/products/list', proxy('http://localhost:3002/products', {
     proxyReqPathResolver: function (req: Request) {
         return '/products';
+    }
+}));
+app.use('/api/v1/products/update-stock', proxy('http://localhost:3002/products/update-stock', {
+    proxyReqPathResolver: function (req: Request) {
+        return '/products/update-stock';
     }
 }));
 

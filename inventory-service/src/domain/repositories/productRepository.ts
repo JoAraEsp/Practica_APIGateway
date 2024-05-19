@@ -22,4 +22,14 @@ export class ProductRepository {
         }
         return null;
     }
+
+    async decreaseStock(id: string, quantity: number): Promise<void> {
+        await pool.query<ResultSetHeader>('UPDATE products SET stock = stock - ? WHERE id = ?', [quantity, id]);
+    }
+
+    async findById(id: string): Promise<Product | null> {
+        const [rows]: [any[], any] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
+        return rows.length > 0 ? rows[0] as Product : null;
+    }
+    
 }

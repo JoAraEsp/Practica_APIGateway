@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { OrderRepository } from "../../domain/repositories/orderRepository";
 import { OrderProductRepository } from "../../domain/repositories/order-productRepository";
-import axios from 'axios';
 import { Order } from "../../domain/models/order";
+import axios from 'axios';
 
 export class OrderController {
     private orderRepository: OrderRepository;
@@ -43,6 +43,8 @@ export class OrderController {
     updateTracking = async (req: Request, res: Response): Promise<void> => {
         const { id } = req.params;
         const { estatus } = req.body;
+        console.log(`Received request to update tracking for order ID: ${id} with status: ${estatus}`);
+
         const order = await this.orderRepository.findById(id);
 
         if (!order) {
@@ -53,8 +55,26 @@ export class OrderController {
         await this.orderRepository.updateTracking(id, estatus);
 
         if (estatus === 'Enviado') {
+            console.log('Order status is "Enviado". Updating stock...');
             const orderProducts = await this.orderProductRepository.findByOrderId(id);
-            await axios.post('http://localhost:3002/products/update-stock', { products: orderProducts });
+            const products = orderProducts.map((op) => ({
+                id: op.productId,
+                quantity: op.quantity,
+            }));
+            try {
+                await axios.post('http://localhost:3002/products/update-stock', { products });
+                console.log('Stock updated successfully');
+            } catch (error) {
+                let errorMessage = 'Failed to update stock';
+                if (axios.isAxiosError(error) && error.response) {
+                    errorMessage = error.response.data.message || errorMessage;
+                } else if (error instanceof Error) {
+                    errorMessage = error.message;
+                }
+                console.log(errorMessage);
+                res.status(500).json({ message: errorMessage });
+                return;
+            }
         }
 
         res.status(200).json({ message: "Tracking updated successfully" });

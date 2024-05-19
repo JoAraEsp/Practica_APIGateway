@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import { OrderProductRepository } from "../../domain/repositories/order-productRepository";
+import { OrderRepository } from "../../domain/repositories/orderRepository";
 
 export class OrderProductController {
     private orderProductRepository: OrderProductRepository;
+    private orderRepository: OrderRepository;
 
-    constructor(orderProductRepository: OrderProductRepository) {
+    constructor(orderProductRepository: OrderProductRepository, orderRepository: OrderRepository) {
         this.orderProductRepository = orderProductRepository;
+        this.orderRepository = orderRepository;
     }
 
     createOrderProduct = async (req: Request, res: Response): Promise<void> => {
@@ -29,4 +32,3 @@ export class OrderProductController {
         }
     };
 }
-

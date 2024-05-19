@@ -16,12 +16,12 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 const productRepository = new ProductRepository();
-
 const productController = new ProductController(productRepository);
 
 app.get('/products', productController.listProducts);
 app.post('/products/create', productController.createProduct);
 app.delete('/products/delete/:id', productController.deleteProduct);
+app.post('/products/update-stock', productController.updateStock); // Asegúrate de que esta ruta esté configurada
 
 app.use('/', async (req, res) => {
     const products = await productRepository.findAll();
@@ -34,3 +34,5 @@ app.use('/', async (req, res) => {
 app.listen(PORT, () => {
     signale.success(`Servicio de ${INVENTORY} corriendo en http://localhost:${PORT}`);
 });
+
+

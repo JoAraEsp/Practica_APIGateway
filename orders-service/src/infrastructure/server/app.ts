@@ -1,11 +1,11 @@
-import express, { Application } from "express";
-import morgan from "morgan";
+import express, { Application } from 'express';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
-import { Signale } from "signale";
-import { OrderController } from "../../application/controllers/orderController";
-import { OrderProductController } from "../../application/controllers/order-productController";
-import { OrderRepository } from "../../domain/repositories/orderRepository";
-import { OrderProductRepository } from "../../domain/repositories/order-productRepository";
+import { Signale } from 'signale';
+import { OrderController } from '../../application/controllers/orderController';
+import { OrderProductController } from '../../application/controllers/order-productController';
+import { OrderRepository } from '../../domain/repositories/orderRepository';
+import { OrderProductRepository } from '../../domain/repositories/order-productRepository';
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ const orderRepository = new OrderRepository();
 const orderProductRepository = new OrderProductRepository();
 
 const orderController = new OrderController(orderRepository, orderProductRepository);
-const orderProductController = new OrderProductController(orderProductRepository);
+const orderProductController = new OrderProductController(orderProductRepository, orderRepository);
 
 app.get('/orders', orderController.listOrders);
 app.post('/orders/create', orderController.createOrder);
@@ -34,7 +34,7 @@ app.put('/orders-products/update/:id', orderProductController.updateOrderProduct
 app.use('/', async (req, res) => {
     const orders = await orderRepository.findAll();
     res.status(200).json({
-        message: "Welcome to orders service",
+        message: 'Welcome to orders service',
         orders: orders
     });
 });
